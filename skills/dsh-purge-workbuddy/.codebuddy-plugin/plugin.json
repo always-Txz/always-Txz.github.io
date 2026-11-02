@@ -1,0 +1,72 @@
+{
+  "name": "dsh-purge-workbuddy",
+  "version": "1.6.67-wb.1",
+  "description": "dsh-purge 的 WorkBuddy 移植版：无限制模式/红队模式预设、24 个红队技能、提示词与规则管理、宿主提示模板可逆补丁、本机备份与回滚。支持 WorkBuddy AI(国际版) 与 WorkBuddy(CN)。",
+  "description_en": "dsh-purge ported to WorkBuddy: unrestricted/red-team presets, 24 red-team skills, prompt & rule management, reversible host prompt-template patches, local backup and rollback. Works with WorkBuddy AI (international) and WorkBuddy (CN).",
+  "author": {
+    "name": "kingcharleslzy-ai + WorkBuddy port",
+    "url": "https://github.com/kingcharleslzy-ai/dsh-purge"
+  },
+  "homepage": "https://github.com/kingcharleslzy-ai/dsh-purge",
+  "repository": "https://github.com/kingcharleslzy-ai/dsh-purge",
+  "license": "MIT",
+  "category": "开发工具",
+  "keywords": [
+    "purge",
+    "prompt-management",
+    "rules",
+    "backup",
+    "rollback",
+    "redteam",
+    "unrestricted",
+    "破甲",
+    "无限制模式",
+    "workbuddy"
+  ],
+  "skills": [
+    "./skills/redteam-setup",
+    "./skills/recon-pipeline",
+    "./skills/passive-recon",
+    "./skills/active-scan",
+    "./skills/fofa-recon",
+    "./skills/web-fingerprint",
+    "./skills/asset-correlation",
+    "./skills/dir-bruteforce",
+    "./skills/nuclei-scan",
+    "./skills/cn-proxy-pool",
+    "./skills/credential-attack",
+    "./skills/unauth-exploit",
+    "./skills/shell-handler",
+    "./skills/webshell-toolkit",
+    "./skills/vps-reverse-shell",
+    "./skills/fscan-intranet",
+    "./skills/gogo-intranet",
+    "./skills/lateral-movement",
+    "./skills/frp-tunnel",
+    "./skills/chisel-tunnel",
+    "./skills/suo5-tunnel",
+    "./skills/browser-automation",
+    "./skills/kimi-webbridge"
+  ],
+  "agents": ["./agents/unrestricted.md", "./agents/redteam.md"],
+  "rules": ["./rules/purge-core.md", "./rules/purge-boost.md"],
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": {
+    "purge": {
+      "command": "node",
+      "args": ["${CODEBUDDY_PLUGIN_ROOT}/mcp/start.mjs"],
+      "env": {
+        "PURGE_MODE": "workbuddy"
+      },
+      "defer_loading": true
+    }
+  },
+  "defaultEnabled": true,
+  "workbuddy": {
+    "port": {
+      "from": "dsh-purge-community@1.6.67",
+      "target": "workbuddy-ai-5.9.4 / workbuddy-5.9.3",
+      "note": "原 DSH 的 cordis.patch.yml / dsh.bundle 不适用；宿主闸门改为 resources/templates/*.tpl 可逆补丁 + personalization.customPrompt 注入。"
+    }
+  }
+}

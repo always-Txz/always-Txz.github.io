@@ -1,0 +1,16 @@
+{
+  "description": "dsh-purge-workbuddy :: SessionStart 漂移修复（升级覆盖模板后自动重打）。永远 exit 0，不影响启动。",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CODEBUDDY_PLUGIN_ROOT}/hooks/dist/repair.mjs\"",
+            "timeout": 8
+          }
+        ]
+      }
+    ]
+  }
+}

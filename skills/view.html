@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>查看 · dsh-purge-workbuddy</title>
+<style>
+  :root{--bg:#f6f7f9;--card:#fff;--ink:#1a1c1f;--sub:#5b6270;--line:#e3e6eb;--accent:#c0392b}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.7;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+  .bar{position:sticky;top:0;z-index:9;background:rgba(246,247,249,.92);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:11px 24px;
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:13px}
+  .bar a{color:var(--sub);text-decoration:none;border:1px solid var(--line);
+    background:var(--card);padding:5px 11px;border-radius:7px}
+  .bar a:hover{color:var(--accent);border-color:var(--accent)}
+  .bar .p{font-family:ui-monospace,Consolas,monospace;color:var(--sub);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:52vw}
+  .wrap{max-width:900px;margin:0 auto;padding:34px 24px 90px}
+  main{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:38px 42px}
+  main h1,main h2,main h3,main h4{line-height:1.35;margin:1.5em 0 .6em;letter-spacing:-.2px}
+  main h1{font-size:26px;margin-top:0;padding-bottom:.35em;border-bottom:1px solid var(--line)}
+  main h2{font-size:20px;padding-bottom:.3em;border-bottom:1px solid var(--line)}
+  main h3{font-size:16.5px} main h4{font-size:15px}
+  main p{margin:.85em 0}
+  main code{background:#f1f3f6;padding:.15em .4em;border-radius:4px;
+    font-family:ui-monospace,Consolas,monospace;font-size:.88em}
+  main pre{background:#f7f8fa;border:1px solid var(--line);border-radius:8px;
+    padding:14px 16px;overflow:auto;font-size:13px;line-height:1.6}
+  main pre code{background:none;padding:0;font-size:inherit}
+  main table{border-collapse:collapse;width:100%;margin:1em 0;font-size:14px;display:block;overflow:auto}
+  main th,main td{border:1px solid var(--line);padding:7px 12px;text-align:left}
+  main th{background:#f7f8fa;font-weight:600}
+  main blockquote{margin:1em 0;padding:.4em 1em;border-left:3px solid var(--accent);
+    background:#fdf7f6;color:var(--sub)}
+  main ul,main ol{padding-left:1.5em}
+  main li{margin:.3em 0}
+  main a{color:var(--accent)}
+  main hr{border:none;border-top:1px solid var(--line);margin:2em 0}
+  .err{color:var(--accent);font-family:ui-monospace,monospace;font-size:13px;white-space:pre-wrap}
+  @media(max-width:640px){main{padding:24px 20px}.wrap{padding:20px 12px 60px}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <a href="./">← 技能列表</a>
+  <span class="p" id="path">加载中…</span>
+  <a id="raw" href="#" style="margin-left:auto">查看源码</a>
+</div>
+<div class="wrap"><main id="out">加载中…</main></div>
+
+<script>
+(function(){
+  var q = new URLSearchParams(location.search);
+  var f = q.get('f') || 'dsh-purge-workbuddy/SKILL.md';
+  var out = document.getElementById('out');
+  document.getElementById('path').textContent = f;
+  document.getElementById('raw').href = encodeURI(f);
+
+  // 只允许 skills 目录内的相对路径
+  if (f.indexOf('..') >= 0 || f.charAt(0) === '/' || f.indexOf('://') >= 0) {
+    out.innerHTML = '<p class="err">非法路径</p>'; return;
+  }
+
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+  function inline(s){
+    s = esc(s);
+    s = s.replace(/`([^`]+)`/g, function(_,c){return '<code>'+c+'</code>';});
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+    s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    return s;
+  }
+
+  function md(src){
+    var lines = src.replace(/\r\n?/g,'\n').split('\n');
+    var html = [], i = 0, inCode = false, codeBuf = [], listType = null, tableBuf = [];
+
+    function closeList(){ if(listType){ html.push('</'+listType+'>'); listType = null; } }
+    function flushTable(){
+      if(!tableBuf.length) return;
+      var rows = tableBuf.filter(function(r){ return !/^\s*\|?[\s:|-]+\|?\s*$/.test(r); });
+      if(rows.length){
+        html.push('<table>');
+        rows.forEach(function(r, idx){
+          var cells = r.replace(/^\s*\|/,'').replace(/\|\s*$/,'').split('|');
+          var tag = idx === 0 ? 'th' : 'td';
+          html.push('<tr>' + cells.map(function(c){
+            return '<'+tag+'>' + inline(c.trim()) + '</'+tag+'>';
+          }).join('') + '</tr>');
+        });
+        html.push('</table>');
+      }
+      tableBuf = [];
+    }
+
+    for(; i < lines.length; i++){
+      var L = lines[i];
+
+      if(/^\s*```/.test(L)){
+        if(inCode){ html.push('<pre><code>'+esc(codeBuf.join('\n'))+'</code></pre>'); codeBuf=[]; inCode=false; }
+        else { closeList(); flushTable(); inCode = true; }
+        continue;
+      }
+      if(inCode){ codeBuf.push(L); continue; }
+
+      if(/^\s*\|.*\|\s*$/.test(L)){ closeList(); tableBuf.push(L); continue; }
+      else flushTable();
+
+      if(!L.trim()){ closeList(); continue; }
+
+      var h = L.match(/^(#{1,6})\s+(.*)$/);
+      if(h){ closeList(); html.push('<h'+h[1].length+'>'+inline(h[2])+'</h'+h[1].length+'>'); continue; }
+
+      if(/^\s*([-*_])\s*\1\s*\1[-\s*_]*$/.test(L)){ closeList(); html.push('<hr>'); continue; }
+
+      if(/^\s*>\s?/.test(L)){ closeList(); html.push('<blockquote>'+inline(L.replace(/^\s*>\s?/,''))+'</blockquote>'); continue; }
+
+      var ul = L.match(/^\s*[-*+]\s+(.*)$/);
+      if(ul){
+        if(listType !== 'ul'){ closeList(); html.push('<ul>'); listType='ul'; }
+        html.push('<li>'+inline(ul[1])+'</li>'); continue;
+      }
+      var ol = L.match(/^\s*\d+[.)]\s+(.*)$/);
+      if(ol){
+        if(listType !== 'ol'){ closeList(); html.push('<ol>'); listType='ol'; }
+        html.push('<li>'+inline(ol[1])+'</li>'); continue;
+      }
+
+      closeList();
+      html.push('<p>'+inline(L)+'</p>');
+    }
+    if(inCode && codeBuf.length) html.push('<pre><code>'+esc(codeBuf.join('\n'))+'</code></pre>');
+    flushTable();
+    closeList();
+    return html.join('\n');
+  }
+
+  fetch(encodeURI(f)).then(function(r){
+    if(!r.ok) throw new Error('HTTP ' + r.status + ' ' + r.statusText);
+    return r.text();
+  }).then(function(t){
+    // 去掉 YAML frontmatter
+    var body = t.replace(/^---\n[\s\S]*?\n---\n/, '');
+    out.innerHTML = md(body);
+    document.title = f.split('/').slice(-2,-1)[0] + ' · dsh-purge-workbuddy';
+  }).catch(function(e){
+    out.innerHTML = '<p class="err">加载失败：' + e.message + '\n路径：' + esc(f) + '</p>';
+  });
+})();
+</script>
+</body>
+</html>
