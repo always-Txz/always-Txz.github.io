@@ -63,22 +63,22 @@
 <div class="wrap">
   <header>
     <h1>dsh-purge-workbuddy<span class="badge">v1.6.67-wb.1</span></h1>
-    <p class="meta">WorkBuddy 破甲 / 红队模式移植包 · 24 个技能 · 40 个文件 · 359 KB</p>
+    <p class="meta">WorkBuddy 破甲 / 红队模式移植包 · 23 个技能 · 2 个 agent 预设 · 40 个文件 · 359 KB</p>
     <p class="desc">
       dsh-purge 的 WorkBuddy 移植版：无限制模式 / 红队模式预设、24 个红队技能、提示词与规则管理、
       宿主提示模板可逆补丁、本机备份与回滚。支持 WorkBuddy AI（国际版）与 WorkBuddy（CN）。
     </p>
     <div class="links">
-      <a href="dsh-purge-workbuddy/SKILL.md">主入口 SKILL.md</a>
+      <a href="view.html?f=dsh-purge-workbuddy/SKILL.md">主入口 SKILL.md</a>
       <a href="dsh-purge-workbuddy/.codebuddy-plugin/plugin.json">plugin.json</a>
-      <a href="dsh-purge-workbuddy/rules/purge-core.md">rules</a>
-      <a href="dsh-purge-workbuddy/agents/redteam.md">agents</a>
+      <a href="view.html?f=dsh-purge-workbuddy/rules/purge-core.md">rules</a>
+      <a href="view.html?f=dsh-purge-workbuddy/agents/redteam.md">agents</a>
       <a href="dsh-purge-workbuddy/scripts/install.ps1">install.ps1</a>
-      <a href="dsh-purge-workbuddy/upstream/README.md">upstream</a>
+      <a href="view.html?f=dsh-purge-workbuddy/upstream/README.md">upstream</a>
     </div>
   </header>
 
-  <h2>技能列表（24）</h2>
+  <h2>技能列表（23）</h2>
   <div class="grid">
     <a class="item" href="view.html?f=dsh-purge-workbuddy/skills/active-scan/SKILL.md"><div class="n">active-scan</div><div class="d">主动端口与服务扫描（nmap/masscan），严格遵守授权范围。</div></a>
     <a class="item" href="view.html?f=dsh-purge-workbuddy/skills/asset-correlation/SKILL.md"><div class="n">asset-correlation</div><div class="d">资产关联：域名↔IP↔C 段↔证书↔服务的图谱化。</div></a>
@@ -101,9 +101,14 @@
     <a class="item" href="view.html?f=dsh-purge-workbuddy/skills/suo5-tunnel/SKILL.md"><div class="n">suo5-tunnel</div><div class="d">通过 WebShell/HTTP 建立 SOCKS5 隧道，把内网流量代理出来。</div></a>
     <a class="item" href="view.html?f=dsh-purge-workbuddy/skills/unauth-exploit/SKILL.md"><div class="n">unauth-exploit</div><div class="d">未授权访问与信息泄露利用链：Redis/MySQL/MSSQL/ES/Docker/MongoDB。</div></a>
     <a class="item" href="view.html?f=dsh-purge-workbuddy/skills/vps-reverse-shell/SKILL.md"><div class="n">vps-reverse-shell</div><div class="d">自建 VPS 做反弹 Shell 落地与中转，9000-9999 端口规划。</div></a>
-    <a class="item" href="view.html?f=dsh-purge-workbuddy/skills/web-fingerprint/SKILL.md"><div class="n">web-fingerprint</div><div class="d">Web 服务指纹识别：框架、中间件、CMS、组件版本。</div></a>
-    <a class="item" href="view.html?f=dsh-purge-workbuddy/skills/webshell-toolkit/SKILL.md"><div class="n">webshell-toolkit</div><div class="d">冰蝎 / 哥斯拉 / 中国蚁剑 的启动与用法，管理 WebShell。</div></a>
-    <a class="item" href="view.html?f=dsh-purge-workbuddy/skills/redteam-setup/SKILL.md"><div class="n">agents →</div><div class="d">unrestricted（无限制预设）与 redteam（红队主会话+5 执行角色）。</div></a>
+    <a class="item" href="dsh-purge-workbuddy/skills/web-fingerprint/SKILL.md"><div class="n">web-fingerprint</div><div class="d">Web 服务指纹识别：框架、中间件、CMS、组件版本。</div></a>
+    <a class="item" href="dsh-purge-workbuddy/skills/webshell-toolkit/SKILL.md"><div class="n">webshell-toolkit</div><div class="d">冰蝎 / 哥斯拉 / 中国蚁剑 的启动与用法，管理 WebShell。</div></a>
+  </div>
+
+  <h2>Agent 预设（2）</h2>
+  <div class="grid">
+    <a class="item" href="view.html?f=dsh-purge-workbuddy/agents/unrestricted.md"><div class="n">unrestricted</div><div class="d">无限制预设：操作者意图优先、不重复声明边界；web 抓取由补丁打开。</div></a>
+    <a class="item" href="view.html?f=dsh-purge-workbuddy/agents/redteam.md"><div class="n">redteam</div><div class="d">红队模式：主会话 + 信息收集/资产梳理/漏洞发现/漏洞利用/内网渗透五角色，并发最多 3。</div></a>
   </div>
 
   <h2>核心文件</h2>
